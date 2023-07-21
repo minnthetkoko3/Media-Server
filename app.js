@@ -11,7 +11,8 @@ let responder = (req,res, param) =>{
 let routes = {
     "GET": {
         "/": (req, res) => {
-           responder(req,res, `<h1>Get Method  => / route</h1>`);
+            let filepath = __dirname + '/index.html'
+            responder(req,res, filepath);
             
         },
         "/home": (req, res) => {
@@ -25,10 +26,15 @@ let routes = {
         "/api/login": (req, res) => { 
             let body = "";
             req.on('data', data => {
-                body += data
+                body += data;
+                if( body.length > 1024) {
+                    res.writeHead(403, {'Content-type': "text/html"});
+                    res.end("<h1> file size over 1 mb</h1>")
+                }
             });
             req.on('end', () => {
                 let query = qs.parse(body);
+                console.log(body);
                 console.log("Email", query.email, "Password", query.password);
                 res.end()
             });
@@ -65,4 +71,3 @@ server.listen(process.env.PORT, () => {
     console.log( `Server Running At ${process.env.PORT}`);
 });
 
-console.log("helloworld")
