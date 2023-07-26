@@ -14,28 +14,44 @@ meme = {
   ".gif": "image/gif",
 };
 
+
+let checkFileExist = (filepath) => {
+    return new Promise((resolve, reject) => {
+        fs.access(filepath, fs.F_OK, (err)=> {
+            if(err) reject(err);
+            resolve (filepath);
+        });
+    });
+};
+
+let readMyFile = (filepath) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filepath, (err, data ) => {
+            if (err) reject (err);
+            resolve(data);
+        });
+    });
+};
+
 let router = (req, res) => {
   let params = url.parse(req.url, true);
   let oriPath = params.pathname == "/" ? "/index.html" : params.pathname;
-  let pathname = __dirname + oriPath;
-
+  let filepath = __dirname + oriPath;
+ 
+  console.log (filepath);
   let ext = path.extname(oriPath);
-  fs.access(pathname, fs.F_OK, (err) => {
-    if (err) {
-      res.writeHead(404, { "Content-Type": "text/html" });
-      res.end("<h1>page not found</h1>");
-    } else {
-      fs.readFile(pathname, (err, data) => {
-        if (err) {
-          res.writeHead(404, { "Content-Type": "text/html" });
-          res.end("<h1>page not found</h1>");
-        } else {
-          res.writeHead(200, { "Content-Type": meme[ext] });
-          res.end(data);
-        }
-      });
-    }
-  });
+  
+  checkFileExist(filepath)
+    .then(readMyFile)
+    .then(data => {
+        res.writeHead(200, {"Content-Type": "text/html"});
+        res.end(data);
+    })
+    .catch(err => {
+        res.writeHead(200, {"Content-Type": "text/html"});
+        res.end("<h1>file not found</h1>")})
+
+  
 };
 
 let server = http.createServer(router);
@@ -43,3 +59,4 @@ let server = http.createServer(router);
 server.listen(process.env.PORT, () => {
   console.log(`Server is running at ${process.env.PORT}`);
 });
+
