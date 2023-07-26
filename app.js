@@ -1,18 +1,30 @@
 let http = require('http');
+let fs = require('fs');
 let url = require('url');
 let qs = require('querystring');
-require('dotenv').config();
+require('dotenv').config;
 
 let responder = (req,res, param) =>{
     res.writeHead(200, {'Content-type': "text/html"});
     res.end(param);
 }
 
+    let myFileReader = (filepath) => {
+        fs.access(filepath, fs.F_OK, (err) => {
+            if (err) throw err;
+            fs.readFile(filepath, (err, data) => {
+                if (err) throw err;
+                return data;
+            })
+        })
+    }    
+
 let routes = {
     "GET": {
         "/": (req, res) => {
             let filepath = __dirname + '/index.html'
-            responder(req,res, filepath);
+            let data = myFileReader(filepath);
+            responder(req,res, data);
             
         },
         "/home": (req, res) => {
