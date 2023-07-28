@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "qr-image": "^3.2.0"
   },
   "name": "72-coder-file-2",
   "version": "1.0.0",
   "description": "test something",
   "main": "app.js",
   "author": "riza",
-  "license": "MIT",
-  "devDependencies": {}
+  "license": "MIT"
 }
